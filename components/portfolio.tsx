@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Github, Linkedin, Mail, Moon, Sun, Calendar, MapPin, Menu, Code, Server, Database } from 'lucide-react'
+import { Github, Linkedin, Moon, Sun, Calendar, MapPin, Menu, Code, Server, Database } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
