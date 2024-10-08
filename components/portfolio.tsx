@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Github, Linkedin, Mail, Moon, Sun, Calendar, MapPin } from 'lucide-react'
+import { Github, Linkedin, Mail, Moon, Sun, Calendar, MapPin, Menu } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -12,8 +12,8 @@ const Star = ({ style }) => (
     className="star"
     style={{
       position: 'absolute',
-      width: '1px',
-      height: '1px',
+      width: '2px',
+      height: '2px',
       borderRadius: '50%',
       ...style,
     }}
@@ -21,29 +21,35 @@ const Star = ({ style }) => (
 )
 
 export function PortfolioComponent() {
-  const [darkMode, setDarkMode] = useState(true)
+  const [darkMode, setDarkMode] = useState(false)
   const [stars, setStars] = useState([])
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode)
+  }
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen)
   }
 
   useEffect(() => {
     const createStar = () => ({
       id: Math.random(),
       left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
+      top: '-10px',
       size: Math.random() * 2 + 1,
-      animationDuration: `${Math.random() * 0.5 + 0.5}s`,
+      animationDuration: `${Math.random() * 3 + 2}s`,
     })
 
-    setStars(Array.from({ length: 100 }, createStar))
+    setStars(Array.from({ length: 50 }, createStar))
 
     const interval = setInterval(() => {
-      setStars(prevStars => prevStars.map(star => 
-        Math.random() > 0.95 ? createStar() : star
-      ))
-    }, 50)
+      setStars(prevStars => [
+        ...prevStars.filter(star => star.top !== '110vh'),
+        createStar()
+      ])
+    }, 200)
 
     return () => clearInterval(interval)
   }, [])
@@ -59,7 +65,7 @@ export function PortfolioComponent() {
         }}
       />
 
-      {/* Stars */}
+      {/* Falling Stars */}
       {stars.map(star => (
         <Star
           key={star.id}
@@ -72,24 +78,28 @@ export function PortfolioComponent() {
             boxShadow: darkMode
               ? `0 0 ${star.size}px white`
               : `0 0 ${star.size}px #4299e1`,
-            animation: `twinkle ${star.animationDuration} ease-in-out infinite`,
+            animation: `fall ${star.animationDuration} linear forwards`,
           }}
         />
       ))}
 
-
-      <header className={`sticky top-0 z-10 ${darkMode ? 'bg-gray-800 bg-opacity-80' : 'bg-white bg-opacity-80'} p-4`}>
+      <header className={`sticky top-0 z-20 ${darkMode ? 'bg-gray-800 bg-opacity-80' : 'bg-white bg-opacity-80'} p-4`}>
         <nav className="container mx-auto flex justify-between items-center">
           <div className="text-2xl font-bold">HP</div>
-          <ul className="flex space-x-4">
-            <li><a href="#about" className="hover:text-gray-300">About</a></li>
-            <li><a href="#experience" className="hover:text-gray-300">Experience</a></li>
-            <li><a href="#projects" className="hover:text-gray-300">Projects</a></li>
-            <li><a href="#skills" className="hover:text-gray-300">Skills</a></li>
-            <li><a href="#education" className="hover:text-gray-300">Education</a></li>
-            <li><a href="#contact" className="hover:text-gray-300">Contact</a></li>
+          <div className="md:hidden">
+            <Button variant="ghost" size="icon" onClick={toggleMenu}>
+              <Menu className="h-[1.2rem] w-[1.2rem]" />
+            </Button>
+          </div>
+          <ul className={`md:flex md:space-x-4 ${menuOpen ? 'block' : 'hidden'} absolute md:relative top-full left-0 right-0 md:top-auto ${darkMode ? 'bg-gray-800' : 'bg-white'} md:bg-transparent p-4 md:p-0`}>
+            <li><a href="#about" className="block py-2 md:py-0 hover:text-gray-300">About</a></li>
+            <li><a href="#experience" className="block py-2 md:py-0 hover:text-gray-300">Experience</a></li>
+            <li><a href="#projects" className="block py-2 md:py-0 hover:text-gray-300">Projects</a></li>
+            <li><a href="#skills" className="block py-2 md:py-0 hover:text-gray-300">Skills</a></li>
+            <li><a href="#education" className="block py-2 md:py-0 hover:text-gray-300">Education</a></li>
+            <li><a href="#contact" className="block py-2 md:py-0 hover:text-gray-300">Contact</a></li>
           </ul>
-          <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
+          <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="hidden md:inline-flex">
             {darkMode ? <Sun className="h-[1.2rem] w-[1.2rem]" /> : <Moon className="h-[1.2rem] w-[1.2rem]" />}
           </Button>
         </nav>
