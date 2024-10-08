@@ -6,8 +6,24 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { v4 as uuidv4 } from 'uuid'; // Import uuid for unique IDs
 
-const Star = ({ style }) => (
+
+interface StarProps {
+  style?: React.CSSProperties; // Specify the type of 'style' prop
+}
+
+// Define the Star interface
+interface Star {
+  id: string; // Use string for UUID
+  left: string;
+  top: string;
+  size: number;
+  animationDuration: string;
+}
+
+
+const Star: React.FC<StarProps> = ({ style }) => (
   <div
     className="star"
     style={{
@@ -15,15 +31,20 @@ const Star = ({ style }) => (
       width: '2px',
       height: '2px',
       borderRadius: '50%',
-      ...style,
+      ...style, // Spread the style object
     }}
   />
-)
+);
+
 
 export function PortfolioComponent() {
   const [darkMode, setDarkMode] = useState(false)
-  const [stars, setStars] = useState([])
+  const [stars, setStars] = useState<Star[]>([]); // Use the Star interface here
   const [menuOpen, setMenuOpen] = useState(false)
+
+
+  const STAR_COUNT = 50;
+  const INTERVAL_TIME = 200;
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode)
@@ -34,25 +55,26 @@ export function PortfolioComponent() {
   }
 
   useEffect(() => {
-    const createStar = () => ({
-      id: Math.random(),
+    const createStar = (): Star => ({ // Use the Star interface for the star object
+      id: uuidv4(),
       left: `${Math.random() * 100}%`,
       top: '-10px',
       size: Math.random() * 2 + 1,
       animationDuration: `${Math.random() * 3 + 2}s`,
-    })
+    });
 
-    setStars(Array.from({ length: 50 }, createStar))
+    // Initialize stars
+    setStars(Array.from({ length: STAR_COUNT }, createStar));
 
     const interval = setInterval(() => {
       setStars(prevStars => [
-        ...prevStars.filter(star => star.top !== '110vh'),
-        createStar()
-      ])
-    }, 200)
+        ...prevStars.filter(star => parseFloat(star.top) < window.innerHeight),
+        createStar(),
+      ]);
+    }, INTERVAL_TIME);
 
-    return () => clearInterval(interval)
-  }, [])
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
 
   return (
     <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'} relative overflow-hidden`}>
@@ -218,79 +240,79 @@ export function PortfolioComponent() {
         </section>
 
         <section id="projects" className="mb-16">
-  <h2 className="text-3xl font-bold mb-4">Projects</h2>
-  <div className="grid md:grid-cols-3 gap-8">
-    {[
-      {
-        name: "Crop-estate",
-        github: "https://github.com/Harsh-Porwal424/crop-estate",
-        live: "https://github.com/Harsh-Porwal424/crop-estate",
-        img_link: "https://firebasestorage.googleapis.com/v0/b/shikshasamvad-7f230.appspot.com/o/file-upload%2F368497784-1cf96518-eaa8-4c99-a4bb-a7d347278fef.png?alt=media&token=14c51689-3441-4d0f-a11c-d86fd35d3f61",
-        desc: "Developed a MERN stack real estate application for buying, renting, and listing properties, featuring real-time chat via Socket.io. The application is containerized with Docker, reducing deployment time by 50% and enhancing scalability. I also implemented Prometheus for backend metrics collection and created a dashboard with Grafana to visualize over 30 metrics."
-      },
-      {
-        name: "Multithreaded Proxy Server",
-        github: "https://github.com/Harsh-Porwal424/MultithreadedProxyServer",
-        live: "https://github.com/Harsh-Porwal424/MultithreadedProxyServer",
-        img_link: "https://firebasestorage.googleapis.com/v0/b/shikshasamvad-7f230.appspot.com/o/file-upload%2F367610233-db139cfb-09d1-47f1-ae3c-2115f7fbf61b.png?alt=media&token=dbcf9866-d34a-4532-952e-a4c06f7b067e",
-        desc: "Developed a high-performance, multithreaded HTTP proxy server capable of managing up to 400 concurrent client connections. To enhance response times and minimize bandwidth usage, I implemented an efficient caching mechanism using the LRU (Least Recently Used) eviction policy."
-      },
-      {
-        name: "Send-It: File Sharing App",
-        github: "https://github.com/Harsh-Porwal424/SendIt",
-        live: "https://send-it-seven.vercel.app/",
-        img_link: "https://firebasestorage.googleapis.com/v0/b/shikshasamvad-7f230.appspot.com/o/file-upload%2FScreenshot%202024-10-09%20at%203.08.56%E2%80%AFAM.png?alt=media&token=6a810c9e-69bf-4123-ba9c-f7b2d5d10055",
-        desc: "Developed a file-sharing platform that allows secure file upload, storage, and password-protected downloads. The platform also enables users to share files via short URLs and direct email capabilities, enhancing convenience and security."
-      },
-      {
-        name: "Animal Health Monitoring (IOT)",
-        github: "https://github.com/Harsh-Porwal424/AnimalHealthMonitering",
-        live: "https://animal-health-monitering.vercel.app/",
-        img_link: "https://firebasestorage.googleapis.com/v0/b/shikshasamvad-7f230.appspot.com/o/file-upload%2FScreenshot%202024-10-09%20at%203.12.45%E2%80%AFAM.png?alt=media&token=257aef6a-c848-4046-a275-75a48da97a92",
-        desc: "Developed a wearable device with a Raspberry Pi Pico to monitor heart rate, respiratory rate, and temperature in animals. The device collects data using sensors and transmits it to ThingSpeak for real-time monitoring, with LEDs providing visual alerts for abnormalities. A moving average filter improves data accuracy. The project is showcased on GitHub, with a live website and YouTube demonstration."
-      },
-      {
-        name: "Sumzee",
-        github: "https://github.com/Harsh-Porwal424/sumzee",
-        live: "https://sumzee.netlify.app/",
-        img_link: "https://firebasestorage.googleapis.com/v0/b/shikshasamvad-7f230.appspot.com/o/file-upload%2FScreenshot%202024-10-09%20at%203.17.47%E2%80%AFAM.png?alt=media&token=fa18c209-34ab-4c4b-b572-f03f49418377",
-        desc: "Developed “Sumzee,” an open-source article summarizer powered by OpenAI GPT-4. This tool efficiently generates quick and accurate summaries of articles, allowing users to save time while staying informed. By streamlining the reading process, “Sumzee” helps users get the gist of content without the need to read lengthy articles. The project is designed to enhance productivity and information retention, making it a valuable resource for anyone looking to manage their reading more effectively."
-      },
-      {
-        name: "Pharmacy Management System",
-        github: "https://github.com/Harsh-Porwal424/Pharmacy_Management_Sys",
-        live: "https://github.com/Harsh-Porwal424/Pharmacy_Management_Sys",
-        img_link: "https://firebasestorage.googleapis.com/v0/b/shikshasamvad-7f230.appspot.com/o/file-upload%2FScreenshot%202024-10-09%20at%203.23.28%E2%80%AFAM.png?alt=media&token=c482c51c-8a9a-432f-91f4-8ba110315a3f",
-        desc: "Developed a Pharmacy Management System using Python’s tkinter for the GUI and MySQL for data management. The system enables users to efficiently add, update, delete, and search medication records through an intuitive interface. It enhances operational efficiency in pharmacies by streamlining medication information management, ensuring data accuracy, and providing user-friendly error handling."
-      }
-    ].map((project, index) => (
-      <Card key={index} className={darkMode ? 'bg-gray-800 text-white' : ''}>
-        <CardHeader>
-          <CardTitle>{project.name}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <img src={project.img_link} alt={project.name} className="w-full h-40 object-cover mb-4" />
-          <p>{project.desc}</p>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button
-            variant="outline"
-            className={darkMode ? "bg-gray-700 hover:bg-gray-600" : ""}
-            onClick={() => window.open(project.github, "_blank")}
-          >
-            GitHub
-          </Button>
-          <Button
-            className={darkMode ? "bg-blue-600 hover:bg-blue-700" : ""}
-            onClick={() => window.open(project.live, "_blank")}
-          >
-            Live Demo
-          </Button>
-        </CardFooter>
-      </Card>
-    ))}
-  </div>
-</section>
+          <h2 className="text-3xl font-bold mb-4">Projects</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Crop-estate",
+                github: "https://github.com/Harsh-Porwal424/crop-estate",
+                live: "https://github.com/Harsh-Porwal424/crop-estate",
+                img_link: "https://firebasestorage.googleapis.com/v0/b/shikshasamvad-7f230.appspot.com/o/file-upload%2F368497784-1cf96518-eaa8-4c99-a4bb-a7d347278fef.png?alt=media&token=14c51689-3441-4d0f-a11c-d86fd35d3f61",
+                desc: "Developed a MERN stack real estate application for buying, renting, and listing properties, featuring real-time chat via Socket.io. The application is containerized with Docker, reducing deployment time by 50% and enhancing scalability. I also implemented Prometheus for backend metrics collection and created a dashboard with Grafana to visualize over 30 metrics."
+              },
+              {
+                name: "Multithreaded Proxy Server",
+                github: "https://github.com/Harsh-Porwal424/MultithreadedProxyServer",
+                live: "https://github.com/Harsh-Porwal424/MultithreadedProxyServer",
+                img_link: "https://firebasestorage.googleapis.com/v0/b/shikshasamvad-7f230.appspot.com/o/file-upload%2F367610233-db139cfb-09d1-47f1-ae3c-2115f7fbf61b.png?alt=media&token=dbcf9866-d34a-4532-952e-a4c06f7b067e",
+                desc: "Developed a high-performance, multithreaded HTTP proxy server capable of managing up to 400 concurrent client connections. To enhance response times and minimize bandwidth usage, I implemented an efficient caching mechanism using the LRU (Least Recently Used) eviction policy."
+              },
+              {
+                name: "Send-It: File Sharing App",
+                github: "https://github.com/Harsh-Porwal424/SendIt",
+                live: "https://send-it-seven.vercel.app/",
+                img_link: "https://firebasestorage.googleapis.com/v0/b/shikshasamvad-7f230.appspot.com/o/file-upload%2FScreenshot%202024-10-09%20at%203.08.56%E2%80%AFAM.png?alt=media&token=6a810c9e-69bf-4123-ba9c-f7b2d5d10055",
+                desc: "Developed a file-sharing platform that allows secure file upload, storage, and password-protected downloads. The platform also enables users to share files via short URLs and direct email capabilities, enhancing convenience and security."
+              },
+              {
+                name: "Animal Health Monitoring (IOT)",
+                github: "https://github.com/Harsh-Porwal424/AnimalHealthMonitering",
+                live: "https://animal-health-monitering.vercel.app/",
+                img_link: "https://firebasestorage.googleapis.com/v0/b/shikshasamvad-7f230.appspot.com/o/file-upload%2FScreenshot%202024-10-09%20at%203.12.45%E2%80%AFAM.png?alt=media&token=257aef6a-c848-4046-a275-75a48da97a92",
+                desc: "Developed a wearable device with a Raspberry Pi Pico to monitor heart rate, respiratory rate, and temperature in animals. The device collects data using sensors and transmits it to ThingSpeak for real-time monitoring, with LEDs providing visual alerts for abnormalities. A moving average filter improves data accuracy. The project is showcased on GitHub, with a live website and YouTube demonstration."
+              },
+              {
+                name: "Sumzee",
+                github: "https://github.com/Harsh-Porwal424/sumzee",
+                live: "https://sumzee.netlify.app/",
+                img_link: "https://firebasestorage.googleapis.com/v0/b/shikshasamvad-7f230.appspot.com/o/file-upload%2FScreenshot%202024-10-09%20at%203.17.47%E2%80%AFAM.png?alt=media&token=fa18c209-34ab-4c4b-b572-f03f49418377",
+                desc: "Developed “Sumzee,” an open-source article summarizer powered by OpenAI GPT-4. This tool efficiently generates quick and accurate summaries of articles, allowing users to save time while staying informed. By streamlining the reading process, “Sumzee” helps users get the gist of content without the need to read lengthy articles. The project is designed to enhance productivity and information retention, making it a valuable resource for anyone looking to manage their reading more effectively."
+              },
+              {
+                name: "Pharmacy Management System",
+                github: "https://github.com/Harsh-Porwal424/Pharmacy_Management_Sys",
+                live: "https://github.com/Harsh-Porwal424/Pharmacy_Management_Sys",
+                img_link: "https://firebasestorage.googleapis.com/v0/b/shikshasamvad-7f230.appspot.com/o/file-upload%2FScreenshot%202024-10-09%20at%203.23.28%E2%80%AFAM.png?alt=media&token=c482c51c-8a9a-432f-91f4-8ba110315a3f",
+                desc: "Developed a Pharmacy Management System using Python’s tkinter for the GUI and MySQL for data management. The system enables users to efficiently add, update, delete, and search medication records through an intuitive interface. It enhances operational efficiency in pharmacies by streamlining medication information management, ensuring data accuracy, and providing user-friendly error handling."
+              }
+            ].map((project, index) => (
+              <Card key={index} className={darkMode ? 'bg-gray-800 text-white' : ''}>
+                <CardHeader>
+                  <CardTitle>{project.name}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <img src={project.img_link} alt={project.name} className="w-full h-40 object-cover mb-4" />
+                  <p>{project.desc}</p>
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <Button
+                    variant="outline"
+                    className={darkMode ? "bg-gray-700 hover:bg-gray-600" : ""}
+                    onClick={() => window.open(project.github, "_blank")}
+                  >
+                    GitHub
+                  </Button>
+                  <Button
+                    className={darkMode ? "bg-blue-600 hover:bg-blue-700" : ""}
+                    onClick={() => window.open(project.live, "_blank")}
+                  >
+                    Live Demo
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </section>
 
         <section id="publication" className="mb-16">
           <h2 className="text-3xl font-bold mb-4">Publication</h2>
@@ -372,17 +394,23 @@ export function PortfolioComponent() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form className="space-y-4" onSubmit={(e) => {
-                e.preventDefault();
-                const name = e.target[0].value;
-                const email = e.target[1].value;
-                const message = e.target[2].value;
-                const mailtoLink = `mailto:harshporwal204@gmail.com?subject=Message from ${name} (${email})&body=${encodeURIComponent(message)}`;
-                window.open(mailtoLink, '_blank');
-              }}>
-                <Input placeholder="Your Name" className={darkMode ? 'bg-gray-700 text-white' : ''} />
-                <Input type="email" placeholder="Your Email" className={darkMode ? 'bg-gray-700 text-white' : ''} />
-                <Textarea placeholder="Your Message" className={darkMode ? 'bg-gray-700 text-white' : ''} />
+              <form
+                className="space-y-4"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.target as HTMLFormElement);
+
+                  const name = formData.get('name') as string; // Retrieve name
+                  const email = formData.get('email') as string; // Retrieve email
+                  const message = formData.get('message') as string; // Retrieve message
+
+                  const mailtoLink = `mailto:harshporwal204@gmail.com?subject=Message from ${name} (${email})&body=${encodeURIComponent(message)}`;
+                  window.open(mailtoLink, '_blank');
+                }}
+              >
+                <Input name="name" placeholder="Your Name" className={darkMode ? 'bg-gray-700 text-white' : ''} required />
+                <Input name="email" type="email" placeholder="Your Email" className={darkMode ? 'bg-gray-700 text-white' : ''} required />
+                <Textarea name="message" placeholder="Your Message" className={darkMode ? 'bg-gray-700 text-white' : ''} required />
                 <Button type="submit" className={darkMode ? "bg-blue-600 hover:bg-blue-700" : ""}>Send Message</Button>
               </form>
             </CardContent>
